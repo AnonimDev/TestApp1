@@ -47,7 +47,6 @@ namespace TestApp1
             {
                 logger.Info("Адрес: {0}, Метод: {1}, IP: {2}", context.Request.Path, context.Request.Method, context.Connection.RemoteIpAddress);
                 await next.Invoke();
-                //await context.Response.WriteAsync("Error 404 - Not Found");
             });
             if (env.IsDevelopment())
             {
@@ -64,10 +63,6 @@ namespace TestApp1
             {
                 endpoints.MapControllers();
             });
-            logger.Info("Адрес:");
-            /*logger.Info("Адрес: {0}, Метод: {1}, IP: {2}", Request.Path, Request.Method, Connection.RemoteIpAddress);
-            */
-            
         }
     }
 }
