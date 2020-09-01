@@ -14,11 +14,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TestApp1.Models;
+using NLog;
 
 namespace TestApp1
 {
     public class Startup
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -38,8 +41,14 @@ namespace TestApp1
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.Use(async (context, next) =>
+            {
+                logger.Info("Адрес: {0}, Метод: {1}, IP: {2}", context.Request.Path, context.Request.Method, context.Connection.RemoteIpAddress);
+                await next.Invoke();
+                //await context.Response.WriteAsync("Error 404 - Not Found");
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -55,15 +64,10 @@ namespace TestApp1
             {
                 endpoints.MapControllers();
             });
-
-            loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "logger.txt"));
-            var logger = loggerFactory.CreateLogger("FileLogger");
-
-            app.Run(async (context) =>
-            {
-                logger.LogInformation("Адрес: {0}, Метод: {1}, IP: {2}", context.Request.Path, context.Request.Method, context.Connection.RemoteIpAddress);
-                await context.Response.WriteAsync("Hello World!");
-            });
+            logger.Info("Адрес:");
+            /*logger.Info("Адрес: {0}, Метод: {1}, IP: {2}", Request.Path, Request.Method, Connection.RemoteIpAddress);
+            */
+            
         }
     }
 }
