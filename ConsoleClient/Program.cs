@@ -2,6 +2,7 @@
 using ConsoleClient.Mocks;
 using NLog;
 using TestApp1.Models;
+using System.Collections;
 
 namespace ConsoleClient
 {
@@ -29,15 +30,26 @@ namespace ConsoleClient
 
                 for (int i = 0; i <= 3; i++)
                 {
-                    string select = client.Select(i);
-                    logger.Info("Ответ: {0}", select);
-                    Console.WriteLine("Ответ: {0}", select);
+                    string SelectId = client.SelectId(i);
+                    logger.Info("Ответ: {0}", SelectId);
+                    Console.WriteLine("Ответ: {0}", SelectId);
                     Console.WriteLine();
                 }
 
                 //Выборка сущности с фильтрами
                 Console.WriteLine("Выборка сущности с фильтрами!");
 
+                Hashtable list = new Hashtable();
+                list.Add("first_name", "Антон");
+                string SelectFilter = client.SelectFilter(list);
+                logger.Info("Фильтр по имени: {0}", SelectFilter);
+                Console.WriteLine("Фильтр по имени: {0}", SelectFilter);
+
+                list.Add("id", "2");
+                SelectFilter = client.SelectFilter(list);
+                logger.Info("Фильтр по имени: {0}", SelectFilter);
+                Console.WriteLine("Фильтр по имени и ID: {0}", SelectFilter);
+                
                 //Удаление сущности
                 Console.WriteLine("Удаление сущности!");
                 string delete = client.Delete(1);

@@ -22,9 +22,36 @@ namespace TestApp1.Controllers
 
         // GET: api/Person
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPerson()
+        public async Task<object> GetPerson([FromQuery] Person filter)
         {
-            return await _context.Person.ToListAsync();
+            IQueryable<Person> person = _context.Person;
+
+            if (filter.id != 0)
+            {
+                person = person.Where(p => p.id == filter.id);
+            }
+
+            if (filter.last_name != null)
+            {
+                person = person.Where(p => p.last_name == filter.last_name);
+            }
+
+            if (filter.first_name != null)
+            {
+                person = person.Where(p => p.first_name == filter.first_name);
+            }
+
+            if (filter.middle_name != null)
+            {
+                person = person.Where(p => p.middle_name == filter.middle_name);
+            }
+
+            if (filter.age != 0)
+            {
+                person = person.Where(p => p.age == filter.age);
+            }
+
+            return person.ToList();
         }
 
         // GET: api/Person/5

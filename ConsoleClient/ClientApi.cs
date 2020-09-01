@@ -1,6 +1,8 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using TestApp1.Models;
+using System.Collections;
+using System;
 
 namespace ConsoleClient
 {
@@ -10,16 +12,21 @@ namespace ConsoleClient
 
         private HttpClient _client = new HttpClient();
 
-        public string Delete(int id)
-        {
-            var response = _client.DeleteAsync(APP_PATH + "api/Person/" + id).Result;
-
-            return response.StatusCode.ToString();
-        }
-
-        public string Select(int id)
+        public string SelectId(int id)
         {
             return _client.GetStringAsync(APP_PATH + "api/Person" + ((id != 0) ? "/" + id : "")).Result;
+        }
+
+        public string SelectFilter(Hashtable filters)
+        {
+            string filterString = "";
+            ICollection keys = filters.Keys;
+            foreach (string key in keys)
+            {
+                filterString += key + "=" + filters[key] + "&";
+            }
+
+            return _client.GetStringAsync(APP_PATH + "api/Person?" + filterString).Result;
         }
 
         public string Create(Person model)
@@ -31,5 +38,11 @@ namespace ConsoleClient
             return response.StatusCode.ToString();
         }
 
+        public string Delete(int id)
+        {
+            var response = _client.DeleteAsync(APP_PATH + "api/Person/" + id).Result;
+
+            return response.StatusCode.ToString();
+        }
     }
 }
